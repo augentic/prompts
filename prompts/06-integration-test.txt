@@ -1,0 +1,180 @@
+You are an expert in **Rust test generation**, **provider-trait WASM architecture**, and **end-to-end integration validation**.
+
+Your task is to generate **real, runnable Rust integration tests** for the new Rust component.
+
+These tests must follow the architecture, process-flows, and behavioral rules extracted during the earlier generation phase.
+
+### **Injected Inputs**
+
+**LEGACY SOURCE CODE (TypeScript/JavaScript):**
+{LEGACY_SOURCE}
+
+**GENERATED RUST CODE (from stage 2):**
+{OUTPUT_DIR} {OUTPUT_NAME}
+
+**IR SCHEMA (from stage 1):**
+{IR_PATH}
+
+---
+
+These tests must validate end-to-end functional correctness of the Rust component according to:
+- The IR schema
+- The intended logical flows
+- Provider interactions
+- External boundary conditions
+- Error handling
+- Cross-provider sequencing
+- State-less WASI execution model
+- Domain invariants derived from both codebases
+
+---
+
+# 🎯 **Your Purpose**
+
+Produce **integration-level tests** that validate **end-to-end functional correctness** of the new Rust component.
+
+These tests **DO NOT** compare the Rust and legacy implementation (that was done in parity tests).
+Instead, these tests verify **that the Rust component behaves correctly as a standalone system**, according to:
+
+* The architecture summary
+* The intended logical flows
+* Provider interactions
+* External boundary conditions
+* Error handling
+* Cross-provider sequencing
+* State-less WASI execution model
+* Domain invariants derived from both codebases
+
+---
+
+# 📌 **Key Requirements**
+
+### **1. Read and interpret existing TS tests**
+
+Use existing Jest + Cucumber tests **as behavioral specifications**, but do not recreate them line-for-one.
+Translate their semantic meaning into Rust integration tests.
+
+### **2. Test focus**
+
+You must generate tests that validate:
+
+#### **End-to-End Request Flows**
+
+* every documented process scenario
+* all major inbound → provider → outbound sequences
+* final outputs + intermediate state rules
+
+#### **Provider-Level Integration**
+
+* inject provider mocks
+* verify provider calls, order, and data correctness
+* simulate provider errors
+
+#### **I/O Surfaces**
+
+* input validation
+* JSON/serde correctness
+* expected transformation steps
+* WASI constraints (stateless, no global state)
+
+#### **Complex Scenarios**
+
+Examples:
+
+* multi-step flows
+* branching logic
+* event dispatch
+* retries/backoff
+* sequencing + invariants
+* time-based behavior (via `wasi-clocks` mock)
+
+### **3. The LLM must output REAL TEST FILES**
+
+* Rust test modules within `tests/`
+* All code must compile
+* Use `#[tokio::test]` where async
+* Use the provided provider mock, modifying it as necessary
+* Do **not** specify a number of files
+* Use deterministic fixtures
+* Use exact types from the Rust component
+* Provide additional small helper modules (test scripts) if needed
+
+### **4. Strong Assertions**
+
+* compare full outputs
+* validate schema
+* assert provider call sequences
+* assert intermediate transformations when accessible
+* include failure messages that show expected vs actual
+
+### **5. No global state**
+
+Every test must be self-contained.
+
+### **6. Include test fixtures**
+
+* valid cases
+* malformed inputs
+* error-propagation scenarios
+* large/edge values
+* probabilistic/approximate scenarios (use deterministic seeds)
+
+---
+
+# 📦 **Test Output Formatting Rules**
+
+You must output:
+
+---
+
+### **1. Full Test Files**
+
+For each generated test file:
+
+```
+# File: tests/<filename>.rs
+<full contents>
+```
+
+These must be complete and ready to paste into the Rust repository.
+
+---
+
+### **2. Any helper modules**
+
+If the tests require helpers, utilities, or deterministic fixture generators, output them in:
+
+```
+# File: tests/support/<name>.rs
+```
+
+---
+
+### **3. Instructions to run**
+
+At the end, include shell commands such as:
+
+```
+cargo test -- --nocapture
+```
+
+Do not include CI instructions here (those were part of parity tests).
+
+---
+
+# 📢 **Critical Reminder**
+
+You must **actually write** the integration tests.
+Do not outline, pseudo-code, or propose test structures—generate real code.
+
+---
+
+# 🧪 **Your Task**
+
+Using all the attached material, generate:
+
+* meaningful integration tests
+* real Rust test files
+* fixture modules
+* provider-mocked flows
+* instructions to run

@@ -1,0 +1,83 @@
+You are an expert test-generator and behavioral-diff analyst focused on ensuring **behavioral parity** between a legacy component and a Rust-wasm provider-based component.  The legacy component is the **source of truth** for runtime behavior; the goal is to ensure the Rust component reproduces the legacy behavior exactly (or with documented, deliberate, and validated differences where parity is impossible). Generate runnable test code, fixtures, harnesses, and clear execution instructions.
+
+### Injected Inputs:
+
+**LEGACY SOURCE CODE:**
+{LEGACY_SOURCE}
+
+**GENERATED RUST CODE (from stage 2):**
+{OUTPUT_DIR} {OUTPUT_NAME}
+
+**IR SCHEMA (from stage 1):**
+{IR_PATH}
+
+---
+
+### Additional Context:
+
+* The legacy component is the **source of truth** for runtime behavior
+* The Rust component should reproduce the legacy behavior exactly
+* Generate parity tests that compare both implementations
+* Use provider trait mocks for dependency injection during tests
+* Document any deliberate, validated differences where parity is impossible
+
+### Your responsibilities (detailed):
+
+1. **Behavioral Extraction & Diff**
+
+   * Parse and extract the important behavioral points from both codebases: function signatures, inputs, outputs, side-effects (IO, HTTP, DB, events), error cases, timing semantics, stateful assumptions, and implicit domain rules.
+   * Produce a clear **Behavioral Diff Summary**: a bullet list of each behavior the legacy component implements and whether the Rust implementation already matches, partially matches, or is missing that behavior. For partial/missing items, include precise file references and code snippets (≤ 25 words each snippet) and suggested remediation.
+
+2. **Canonical Truth & Acceptance Criteria**
+
+   * State that the legacy component is canonical truth. For each behavior item, define **stage criteria** the tests will assert to claim parity. Example: “Given input X, both systems must return JSON equal after normalization A” or “On network failure, both systems must return error code E with message shape {code, message}”.
+
+3. **Test Coverage Plan**
+
+   * Provide an exhaustive test plan covering:
+
+     * Public API unit parity tests for every exported function
+     * Integration-level scenario parity tests that mirror actual request/response flows
+     * Error-path tests (timeouts, provider failures, malformed inputs)
+     * Edge and boundary conditions, including serialization and floating-point or rounding behaviors if relevant
+     * Time-dependent behaviors using `wasi-clocks` (explicitly mockable)
+     * Non-deterministic behavior reconciliation strategies (explain how to assert semantic equivalence instead of strict equality if needed)
+
+4. **Test Harness**
+
+   * Create a parity test harness that:
+
+     * Spins up a minimal environment to run the legacy component (Node/Deno) for specific test cases
+     * Loads the Rust compiled module (or calls the Rust API directly if running native tests) with the same inputs
+     * Uses the `provider_mock` to ensure both systems see identical provider behavior
+     * Normalizes outputs using deterministic normalization steps (canonical JSON ordering, timestamp normalization, floating tolerance, stable ID mapping)
+     * Compares outputs and reports actionable diffs (field-level differences with example values)
+
+5. **Test Implementation Requirements**
+
+   * Tests must be written in Rust test framework (cargo test): use `#[cfg(test)]` and `#[tokio::test]` where async is required.
+   * Use the provider trait mock to replace external dependencies; mocks must be deterministic and allow injection of error scenarios.
+   * Avoid global state and panics; tests must clean up and be idempotent.
+   * Use explicit, narrow assertions and helpful failure messages. When equality isn’t possible, provide semantic assertions (e.g., `approx_eq`, `contains`, `schema_validate`).
+   * All test outputs must be formatted as real file contents suitable for direct insertion into `tests/` or `src/tests/`.
+
+6. **Fixtures & Test Data Generation**
+
+   * Generate a set of fixtures: typical successful transactions, malformed inputs, large payloads, edge numeric values, and time-based edge cases.
+   * Provide scripts that produce randomized-but-deterministic fixtures using a fixed RNG seed.
+
+9. **When parity cannot be auto-validated**
+
+   * List behavioral items that require human review and provide deterministic checklists and example inputs to reproduce.
+
+### Output formatting rules:
+
+* Begin with a **Behavioral Diff Summary (detailed)**.
+* Next, present the **Test Plan (detailed)**.
+* Then output the **full test file contents**, each file separated and labeled with a file path header (so they can be copy-pasted into files directly).
+* End with **execution instructions**, and manual checks.
+
+Generate Rust test files directly inside the Rust project.
+Place them under:
+src/tests/ or tests/ depending on conventional Rust layout.
+You may create new files as needed.
