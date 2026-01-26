@@ -1,0 +1,35 @@
+You are an expert Rust developer. Your task is to fix the generated Rust code to ensure all tests pass.
+
+**GENERATED RUST CODE (from stage 2, may have test failures):**
+{OUTPUT_DIR} {OUTPUT_NAME}
+
+**IR SCHEMA (for reference):**
+{IR_PATH}
+
+**LEGACY SOURCE CODE (for behavioral reference):**
+{LEGACY_SOURCE}
+
+---
+
+## Your Task
+
+1. **Analyze all test failures** in the generated code
+2. **Fix the implementation code** to make all tests pass
+3. **Do NOT modify test harness or test intent** - only fix the implementation
+4. **If a test is wrong or wrongly written**, you are allowed to modify it without changing its intent
+5. **Preserve all business logic** - do not remove or alter functionality
+6. **Output the corrected code** with all tests passing
+
+## Rules
+
+- Fix only implementation issues, not test structure
+- Preserve all business logic and behavior
+- Do not introduce new dependencies
+- Do not use forbidden OS APIs
+- All I/O must go through provider traits
+- Maintain statelessness
+- Keep error handling consistent
+
+## Output Format
+
+Output the complete corrected Rust crate with all tests passing.
