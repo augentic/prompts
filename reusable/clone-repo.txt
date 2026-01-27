@@ -10,7 +10,7 @@ You are a repository cloning assistant. Your task is to clone a git repository t
 
 2. Extract the repository name from the URL:
    - The repository name is the last part of the URL path (without .git extension)
-   - For example: "git@bitbucket.org:Propellerhead/my_repo.git" -> "my_repo"
+   - For example: "https://github.com/augentic/pipeline.git" -> "pipeline"
 
 3. Check if the repository already exists:
    - The full path will be: {DEST_DIR}/<repo_name>
