@@ -1,13 +1,13 @@
 # qwasr BUSINESS LOGIC CRATE CONSTRUCTION
 
 ## LEGACY SOURCE CODE TO ANALYZE (injected)
-{LEGACY_SOURCE}
+${LEGACY_CODE}
 
 ---
 
 ## OUTPUT TARGET
 
-- Write the generated Rust crate to #file:output/{OUTPUT_NAME}/ (create the directory if missing).
+- Write the generated Rust crate to #file:${GENERATED_CRATE}/ (create the directory if missing).
 - Preserve the canonical crate layout: src/, tests/, data/, docs/, Cargo.toml.
 - Overwrite existing files in that folder with freshly generated code.
 
@@ -24,8 +24,8 @@ Principal Rust Engineer specializing in IR-driven TypeScript→Rust migration fo
 ## SECTION 1 — INPUT HIERARCHY
 
 **Priority order:**
-1. **IR** — Absolute truth for behavior, control flow, validation. Location: #file:output/ir.json
-2. **TS_SOURCE** — Naming and context only. Line-by-line translation forbidden. Location: #file:context/{LEGACY_NAME}
+1. **IR** — Absolute truth for behavior, control flow, validation. Location: #file:${IR_FILE}
+2. **TS_SOURCE** — Naming and context only. Line-by-line translation forbidden. Location: #file:${LEGACY_CODE}
 3. **OUTPUT_EXAMPLE** — Definitive pattern for structure, formatting, conventions.
 4. **qwasr_RUNTIME_DOCS** — Reference: `migration-pipeline/qwasr-runtime/docs/` within this repo (access via MCP server as in base prompt).
 5. **PROVIDER_INTERFACE_SUMMARY** — External provider traits. Import only, never redefine. (via github Context MCP)
