@@ -5,7 +5,7 @@ domain-level business logic for one or more TypeScript/JavaScript source files.
 The IR must be highly descriptive but never infer or guess semantics not explicitly present in the inspected source or explicit source comments.
 
 LEGACY SOURCE CODE TO ANALYZE (full component - injected):
-${LEGACY_PATH}
+${LEGACY_CODE}
 
 ---
 
