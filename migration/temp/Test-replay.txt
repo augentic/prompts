@@ -1,0 +1,277 @@
+# Augentic WASM Replayer Test Generation Prompt
+
+You are an expert Rust developer working with the Augentic WASM runtime and testing framework. Your task is to generate a comprehensive "Replayer" test harness for a specific WASM component. This harness allows running the component against recorded production data (snapshots) to verify behavior correctness, specifically handling time-dependent logic and external I/O mocking.
+
+
+
+USE MCP TO LOOK AT LIB AND EXAMPLE IS A MUST DO
+
+PLACES TO KNOW
+## Injected inputs
+- IR: {{IR_PATH}}
+- Legacy source: {{LEGACY_CODE}}
+- Output dir/ location of component: {{OUTPUT_DIR}}
+
+## Goal
+Construct a Rust test module that:
+1.  **Analyzes** the target component to identify its input/output types and external dependencies (**MANDATORY: Use MCP to read component source code and dependencies**).
+2.  **Defines** a `Replay` struct implementing the `augentic_test::Fixture` trait to map JSON test definitions to these types.
+3.  **Implements** a `MockProvider` to intercept and mock external calls (HTTP, PubSub, Config, Identity) and capture outputs.
+4.  **Implements** a time-shifting transformation function to adjust historical data (timestamps) in inputs to be relative to `Utc::now()`.
+5.  **Provides** a test runner that executes the component against a set of JSON data files and performs deep verification.
+6.  **Documents** the test harness with a glossary, versioning information, and performance/security notes.
+
+## MCP (Model Context Protocol) Access
+**What MCP Is**: MCP is the Model Context Protocol that lets tools (e.g., Cascade) fetch repo files/metadata from GitHub with an access token. Here, "GitHub MCP access" means a configured MCP server that can read the target repository.
+
+**Quick Setup (GitHub MCP)**
+1. Install/start the MCP GitHub server as documented in the shared tooling. Verify it is reachable from your assistant/runtime.
+2. Provide a GitHub token with **repo:read** (and any org scopes needed). Keep the token out of code; configure via secrets/env.
+3. Point the assistant to the MCP endpoint (URL + token). Confirm with a smoke test: list `Cargo.toml` in the target repo.
+
+**Failure Modes & Handling (prevent prompt breakdown)**
+- Missing/expired token → Expect auth errors. Refresh token, re-run the smoke test.
+- Private repo denied → Confirm org access; fall back to collaborator invitation or alternate mirror.
+- Network/endpoint down → Retry with backoff; if persistent, switch to fallback methods below.
+- Rate limits → Pause, reduce bulk fetches, prefer targeted reads.
+
+## Context Gathering via MCP
+**CRITICAL: Prefer MCP servers for context gathering. Without accurate context from the target repository, the generated test harness will be incorrect and unusable.**
+
+To generate accurate test harnesses, **MANDATORILY** gather comprehensive context from the target component's repository using GitHub MCP access (or approved fallback if MCP is unavailable):
+1. **Component Source Code**: Read the main library file (e.g., `src/lib.rs`) and key handler functions to identify input/output types and external dependencies.
+2. **Test Data Structure**: Examine existing test JSON files in `data/` or `tests/data/` to understand the schema for inputs, params, http_requests, and outputs.
+3. **Provider Traits**: Identify which `qwasr_sdk` traits the component uses (e.g., `HttpRequest`, `Publisher`, `Config`, `Identity`).
+4. **Time Logic**: Search for timestamp comparisons or `Utc::now()` usage to determine if `shift_time` is required.
+5. **Metadata**: Read `Cargo.toml` for dependencies and `README.md` for component description.
+
+**Use MCP to fetch file contents and metadata directly from GitHub repositories. If the repository is private, ensure the MCP access token has appropriate permissions. If MCP is unavailable, use fallbacks below; document any context gaps explicitly.**
+
+### MCP Unavailable? Fallback Context Methods (keep prompt usable)
+1. **Local checkout**: If the repo is mounted locally, read files directly (respect provider-pattern constraints—no raw WASI in domain code).
+2. **Cached artifacts**: Use prior IR dumps, generated docs, or recorded JSON fixtures in `data/` if present.
+3. **Minimal-safe defaults**: If input/output types are unknown, scaffold enums/structs with TODOs and mark tests as `#[ignore]` until context is restored.
+4. **Ask for clarity**: Emit a checklist of missing files (e.g., `src/lib.rs`, `Cargo.toml`, `README.md`) and block risky assumptions.
+
+## Implementation Steps
+
+### Phase 1: Context Analysis
+Before writing code, **MANDATORILY use MCP to analyze the target component's GitHub repository**:
+- **Input Type**: What struct does the component accept? (e.g., `R9kMessage`, `HttpRequest`) - **Check via MCP**.
+- **Output Type**: What does it produce? (e.g., `Vec<SmarTrakEvent>`) - **Verify with MCP**.
+- **Dependencies**: Does it use `qwasr_sdk::Config`, `Publisher`, `Identity`? - **Inspect source code via MCP**.
+- **Time Sensitivity**: Does the component compare timestamps against "now"? If so, `shift_time` is critical - **Search code with MCP**.
+
+### Phase 2: Define the Replay Fixture
+Create `tests/provider.rs`. Define the `Replay` struct to deserialize the JSON test definition.
+
+**Critical Requirement**: Use MCP to examine existing test JSON files to ensure correct deserialization logic. The `from_data` method must handle specific deserialization logic. 
+*   **String Inputs**: If the input in the JSON file is a raw string (e.g., XML), you must deserialize that string into the target Rust struct inside `from_data`.
+*   **Untagged Outputs**: Use `#[serde(untagged)]` for the output enum to handle both success arrays and error objects transparently.
+
+```rust
+#[derive(Debug, Clone, Deserialize)]
+pub struct Replay {
+    pub input: Option<ComponentInputType>, // Or String if double-deserialization needed
+    pub params: Option<ReplayTransform>,
+    pub output: Option<ReplayOutput>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(untagged)]
+pub enum ReplayOutput {
+    Success(Vec<ExpectedEventType>),
+    Error(qwasr_sdk::Error),
+}
+
+impl Fixture for Replay {
+    type Error = qwasr_sdk::Error;
+    // ... types ...
+
+    fn from_data(data_def: &TestDef<Self::Error>) -> Self {
+        // Example: Handle double-deserialization for XML inputs
+        // let input_str: Option<String> = data_def.input...
+        // let input = input_str.map(|s| quick_xml::de::from_str(&s)...);
+        // Handle invalid JSON gracefully with context-rich errors
+        // let parsed_output: Result<ReplayOutput, _> = serde_json::from_value(...)
+        //     .map_err(|e| anyhow!("invalid test output JSON: {e}"));
+        // If fixtures contain invalid shapes, log and surface a structured error
+        // tracing::error!(err = %e, "invalid replay fixture output");
+        // return Err(anyhow!("fixture output shape mismatch: {e}"));
+
+        // Map data_def.output (TestResult) to ReplayOutput
+        // TestResult::Success(v) -> ReplayOutput::Success(serde_json::from_value(v)...)
+        // TestResult::Failure(e) -> ReplayOutput::Error(e)
+    }
+}
+```
+
+### Phase 3: Implement the Mock Provider
+The `MockProvider` must capture side-effects (published messages) and provide mocked responses.
+
+**Key Pattern**: Use `Fetcher` for HTTP mocking.
+```rust
+#[derive(Clone)]
+pub struct MockProvider {
+    test_case: PreparedTestCase<Replay>,
+    pub events: Arc<Mutex<Vec<ExpectedEventType>>>,
+}
+
+impl HttpRequest for MockProvider {
+    async fn fetch<T>(&self, request: Request<T>) -> Result<Response<Bytes>>
+    where T: http_body::Body + Any, ... {
+        let Some(http_requests) = &self.test_case.http_requests else {
+             tracing::warn!(path = ?request.uri(), "no http requests defined; returning 404 mock");
+             return Err(anyhow!("no http requests defined"));
+        };
+        // Verify request matches definition and return mock response
+        let fetcher = Fetcher::new(http_requests);
+        fetcher.fetch(&request)
+    }
+}
+
+impl Publisher for MockProvider {
+    async fn send(&self, _topic: &str, message: &Message) -> Result<()> {
+        // Capture output for verification
+        let event: ExpectedEventType = serde_json::from_slice(&message.payload)
+            .map_err(|e| anyhow!("invalid published payload: {e}"))?;
+        let mut guard = self.events.lock().unwrap();
+        guard.push(event);
+        Ok(())
+    }
+}
+```
+
+**Edge case: components without certain providers**
+- If the component never calls HTTP, implement `HttpRequest` to return a clear error: `Err(anyhow!("HTTP not supported for this component"))` and assert no HTTP expectations exist in fixtures.
+- If only messaging is used, keep other provider traits as no-ops that log attempts.
+ - If Config/Identity are unused, implement them to return `anyhow!("provider not wired for this test")` and log with `tracing::debug!` to aid diagnosis.
+
+**Edge case: non-time-sensitive logic**
+- If no `Utc::now()` comparisons exist, allow `shift_time` to be a pass-through and document that time normalization is skipped.
+
+### Phase 4: Time Transformation Logic (`shift_time`)
+This is the most critical part for stability. You must calculate the age of the original data and shift it to "now".
+
+**Pattern**:
+1.  Extract the "anchor" timestamp from the input message (e.g., `created_at`).
+2.  Calculate `delay = params.delay` (or derive it).
+3.  Calculate `target_time = Utc::now() - duration(delay)`.
+4.  Adjust all relevant timestamps in the input struct to align with `target_time`.
+5.  **Crucial**: If the component logic relies on `seconds_from_midnight`, ensure you recalculate that based on `target_time` in the correct timezone.
+
+```rust
+pub fn shift_time(input: &InputType, params: Option<&ReplayTransform>) -> InputType {
+    let mut modified = input.clone();
+    let delay = params.map(|p| p.delay).unwrap_or(0);
+    
+    // Example: Shifting a creation date
+    let now = Utc::now().with_timezone(&Auckland); // Use correct TZ
+    modified.created_date = now.date_naive();
+    
+    // Example: Shifting seconds-of-day
+    let from_midnight = now.num_seconds_from_midnight() as i32;
+    let adjusted_secs = from_midnight - delay;
+    modified.arrival_time = adjusted_secs;
+
+    modified
+}
+```
+
+### Phase 5: Test Runner & Verification
+Create `tests/replay.rs`.
+The verification step must be robust against slight timing differences (execution time).
+
+**Verification Logic**:
+```rust
+#[tokio::test]
+async fn run() {
+    // Iterate over JSON files in data/replay/
+}
+
+async fn replay(test_def: TestDef<Error>) {
+    let test_case = TestCase::<Replay>::new(test_def).prepare(shift_time);
+    let provider = MockProvider::new(test_case.clone());
+    let client = Client::new("test").provider(provider.clone());
+
+    // Execute
+    let _ = client.request(test_case.input.expect("input")).await;
+    let actual_events = provider.events();
+
+    // Verify
+    match test_case.output {
+        Some(Ok(expected_events)) => {
+            assert_eq!(expected_events.len(), actual_events.len());
+
+            for (expected, actual) in expected_events.iter().zip(actual_events) {
+                // 1. Check timestamp drift (allow small window)
+                let diff = Utc::now().timestamp() - actual.timestamp.timestamp();
+                assert!(diff.abs() < 5, "timestamp drift too high: {}", diff);
+
+                // 2. Normalize timestamps for strict equality check
+                let mut actual_norm = actual.clone();
+                actual_norm.timestamp = expected.timestamp; 
+                actual_norm.received_at = expected.received_at;
+
+                assert_eq!(serde_json::to_value(expected).unwrap(), 
+                           serde_json::to_value(actual_norm).unwrap());
+            }
+        },
+        Some(Err(expected_error)) => {
+            // Verify error code and description
+            // tracing::info!(?expected_error, "expecting component error");
+            // assert_eq!(expected_error.code, actual_error.code);
+        }
+    }
+}
+```
+
+## Versioning the Prompt (staged migration alignment)
+- **Component type tiers**: Maintain minor versions per component family (e.g., `v1-http-only`, `v1.1-http-messaging`, `v1.2-sql`).
+- **Complexity tiers**: Add suffixes for time-shifted vs non-time-sensitive components (`-timeful`, `-timeless`).
+- **Changelog discipline**: When expanding required providers or schema expectations, bump the minor version and document breaking expectations for fixtures.
+
+## Performance and Security Notes
+- **Async efficiency**: Prefer reusing `Fetcher` instances per test_case; avoid cloning large fixtures repeatedly. Use `Arc<Mutex<...>>` only where mutation is required and keep lock scope short.
+- **Tracing**: Use `tracing` for structured logs; avoid logging sensitive payloads. Log only summaries/hashes when needed.
+- **MCP access validation**: Before relying on MCP, run a smoke call (`list Cargo.toml`) and short-circuit with a clear error if inaccessible to prevent partial-context generation.
+- **Rate limits**: Batch file fetches and cache results within the test generation session; back off on 429s.
+
+## Glossary
+- **MCP (Model Context Protocol)**: Protocol and server that let tools read repo files/metadata with authenticated access.
+- **qwasr_sdk**: Guest Rust SDK exposing provider traits (HTTP, messaging, config, identity, telemetry) for Augentic WASM components.
+- **Replay/Replayer**: Test harness that replays recorded inputs/fixtures against a WASM component.
+- **Fixture**: `augentic_test::Fixture` implementation describing how to map JSON test data to component inputs/outputs.
+- **Fetcher**: Helper used to match and mock HTTP requests from fixtures.
+
+## JSON Data Schema
+The test files in `data/replay/` will follow this structure:
+```json
+{
+  "input": "...", // or object
+  "params": { "delay": 123 },
+  "http_requests": [
+      { 
+          "path": "/gtfs/stops", 
+          "method": "GET", 
+          "response": { "body": "..." } 
+      }
+  ],
+  "output": {
+    "success": [ ... ] 
+    // OR
+    "failure": { "BadRequest": { "code": "...", "description": "..." } }
+  }
+}
+```
+
+## Task
+**PREREQUISITE: Obtain MCP access to the target GitHub repository before proceeding.**
+
+Generate the full code for:
+1.  `tests/provider.rs`
+2.  `tests/replay.rs`
+
+Ensure all imports are resolved and the code compiles with `augentic-test`, `qwasr-sdk`, and `chrono`.
+
+ALSO OUTPUT A TEST CONSTRUCTION REPORT DOC ON WHAT ACTIONS WHERE TAKEN AND THE STATE OF THE TEST AND REPLAYER

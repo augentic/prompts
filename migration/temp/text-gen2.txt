@@ -6,11 +6,11 @@ The rewritten Rust code must faithfully implement all business logic, structures
 SECTION 1 — REQUIRED INPUTS
 ----------------------------------------------------------------------
 
-Output to a folder called {OUTPUT_NAME} in {OUTPUT_DIR}
+Output to a folder called {{OUTPUT_NAME}} in {{OUTPUT_DIR}}
 
 You will receive the following mandatory inputs (injected). These constitute the complete context required for code generation.
 
-1. IR_SCHEMA (Intermediate Representation) {IR_PATH}
+1. IR_SCHEMA (Intermediate Representation) {{IR_PATH}}
 This contains:
 - All business logic
 - All data-flow rules and state transitions
@@ -21,7 +21,7 @@ This contains:
 - All inbound/outbound interfaces
 This IR is authoritative: if any conflict arises between IR and TypeScript source, the IR prevails. Use this IR as the single source of truth for all logic.
 
-2. TS_SOURCE (Original TypeScript Code) {LEGACY_SOURCE}
+2. TS_SOURCE (Original TypeScript Code) {{LEGACY_CODE}}
 The TypeScript source is used only for:
 - Naming should remain semantically aligned with TypeScript, but inconsistent or misleading TypeScript names must be rewritten into clear, idiomatic Rust names when meaningfully preserving intent.
 - Behavioral nuance
@@ -128,7 +128,7 @@ Boundary wiring (WASI exports, provider implementations, component build) is out
 
 3.3 Data Models
 TypeScript interfaces must be rewritten as Rust structs using:
-`serde::{Serialize, Deserialize}`
+`serde::{{Serialize, Deserialize}}`
 
 3.4 Kafka Consumers
 All TS KafkaJS-based consumer logic must map to domain `Handler<P>` implementations on inbound message request types (boundary `incoming_handler::Guest` wiring is out of scope here).
@@ -152,8 +152,8 @@ IMPORTANT: Use the GitHub MCP server to access the augentic/context repository. 
 Hard rule: For handler glue, provider composition, error conversion, and request/response shapes, copy the structure from augentic/context examples. Do not invent new handler wiring patterns.
 
 All generated Rust handlers MUST integrate with qwasr-sdk using:
-    use qwasr_sdk::api::{Handler, Context, Reply};
-    use qwasr_sdk::{Config, HttpRequest, Identity, Publisher, StateStore, Message, Error, Result, IntoBody};
+    use qwasr_sdk::api::{{Handler, Context, Reply}};
+    use qwasr_sdk::{{Config, HttpRequest, Identity, Publisher, StateStore, Message, Error, Result, IntoBody}};
 
 Rules:
 - Implement Handler<P> directly on the request type T (not on wrapper types)
@@ -264,7 +264,7 @@ There is NO unified `Provider` trait in the generated code (though the host appl
 The generated code must NOT define or implement any `Provider` trait.
 The generated code must only import and use the qwasr-sdk traits:
 
-use qwasr_sdk::{Config, HttpRequest, Identity, Publisher, StateStore, Message, Error, Result};
+use qwasr_sdk::{{Config, HttpRequest, Identity, Publisher, StateStore, Message, Error, Result}};
 
 IMPORTANT: Use the GitHub MCP server to access the augentic/context repository. Read supportingDocs/provider-composition.md for comprehensive provider pattern documentation and examples. Examine crates/ex-http/src/lib.rs and crates/ex-cache/src/lib.rs for working implementations demonstrating correct provider usage.
 
@@ -278,7 +278,7 @@ Provider trait bounds must be minimal and local:
 
 5.1 DI Rules
 Every function that performs I/O must accept a generic parameter implementing the required subtraits, e.g.:
-`pub async fn run<P>(provider: &P, ...) where P: HttpRequest + StateStore + Publisher + Identity + Config { ... }`
+`pub async fn run<P>(provider: &P, ...) where P: HttpRequest + StateStore + Publisher + Identity + Config {{ ... }}`
 
 5.2 WASI Handler Integration
 WASM handlers receive providers through the Context parameter.
@@ -291,7 +291,7 @@ The handler implementations must call into internal logic that receives the prov
 5.4 Provider Trait Enforcement — Hard Guarantees
 All qwasr-sdk provider traits (`HttpRequest`, `StateStore`, `Publisher`, `Identity`, `Config`) are externally defined.
 The generated component must depend on them via imports only:
-    use qwasr_sdk::{Config, HttpRequest, Identity, Publisher, StateStore, Message, Error, Result};
+    use qwasr_sdk::{{Config, HttpRequest, Identity, Publisher, StateStore, Message, Error, Result}};
 You must enforce strict adherence to provider traits:
 - No construction of host-side types such as Client, Config, Producer, Consumer, Redis, etc.
 - No new I/O abstractions may be created; all external operations must route through the existing provider traits.
