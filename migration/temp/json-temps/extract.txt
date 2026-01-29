@@ -1,0 +1,98 @@
+You are performing FULL EXTRACTION for a legacy TypeScript/JavaScript component that will be migrated to Rust. Your job is to generate a complete IR schema describing the component’s structure, semantics, behavior, dependencies, and business logic.
+
+**You MUST read all code AND comments.
+You MUST treat comments as advisory, not authoritative:
+If a comment contradicts code → code wins.
+If a comment is vague, low-quality, outdated, or unhelpful → ignore it.
+If a comment provides clarifying intent that aligns with code → include it.**
+IF SQL operations found: Keep "sql_operations" section to ir_output.
+IF NO SQL operations found: Omit "sql_operations" section entirely
+
+Perform these steps:
+Use a todolist of
+1. Extract STATIC CONTEXT (Extract structural information from code first and optionally from comments if they reinforce what the code shows: imports, exports, types, interfaces, classes, function, declared or implied dependencies, references to deprecated or outdated behavior (comments may reveal this)
+Validation rule: Comments may suggest structure, but code defines it. Comments cannot override the actual code.)
+2. Extract SEMANTIC CONTEXT (component purpose, data flow, invariants, domain rules, interactions. If a comment describes behavior that does not appear in code, mark it as "comment-claimed but not implemented" in notes, but do not treat it as truth.)
+3. Extract EXECUTION CONTEXT (Identify all I/O (network, database, redis, filesystem, message-bus, etc, Identify async patterns, concurrency, retries, or time-based logic, how errors propagate through the call chain)
+4. Extract BUSINESS LOGIC (language-agnostic rules and flows, Tag external dependencies so the next phase knows what must be replaced or re-implemented, identify conditional rules, side effects, invariants and outcomes)
+
+Rules:
+- Comments inform extraction but never override code.
+- Ignore comments that are outdated, irrelevant, contradictory, or unclear.
+- Maintain strict consistency with the IR schema.
+- Do not omit any fields.
+- Keep business logic separate from structural context.
+- Tag all external dependencies.
+- Output as strict valid json
+
+Return ONLY the IR schema.
+Output to {
+    {IR_PATH
+    }
+}
+
+LEGACY SOURCE CODE (injected): {
+    {LEGACY_CODE
+    }
+}
+
+IR Schema: {
+    "component_name": "",
+    "source_paths": [],
+    "step": "extract_all",
+    "context": "Full source code of the component",
+    "analysis": "Explain findings across all extraction layers",
+    "ir_output": {
+        "structures": {
+            "imports": [],
+            "exports": [],
+            "types": [],
+            "classes": [],
+            "functions": [],
+            "external_dependencies": []
+        },
+        "http_endpoints": [
+            {
+                "method": "",
+                "path": "",
+                "description": "" // brief, 1-line summary of purpose
+            }
+        ],
+        "sql_operations": {
+            "inferred_ddl": {
+                "tables": [
+                    {
+                        "table_name": "",
+                        "inferred_columns": [
+                            {
+                                "column_name": "",
+                                "inferred_type": "",
+                                "nullable": null,
+                                "evidence": ""
+                            }
+                        ],
+                        "inferred_constraints": [],
+                        "evidence_source": ""
+                    }
+                ]
+            }
+        },
+        "business_logic": {
+            "flows": [],
+            "rules": [],
+            "state_transitions": [],
+            "external_dependency_usage": []
+        },
+        "context": {
+            "purpose": "",
+            "data_flow": [],
+            "domain_rules": [],
+            "interactions": [],
+            "io_operations": [],
+            "async_patterns": [],
+            "error_flow": [],
+            "performance_sensitive_areas": []
+        },
+        "notes": ""
+    }
+}
