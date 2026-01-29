@@ -428,6 +428,12 @@ Use qwasr_sdk::Result<T> and qwasr_sdk::Error for error propagation:
 - All errors carry context using .context() and .map_err()
 - Use error macros from Section 6.6 for HTTP-aware responses
 
+**ALL public APIs and Handler implementations MUST use:**
+- qwasr_sdk::Result<T> for return types (NEVER anyhow::Result)
+- qwasr_sdk::Error for error types (NEVER anyhow::Error)
+- qwasr_sdk::Context<'_, P> for handler context (NEVER custom context)
+- Handler trait from qwasr_sdk (NEVER custom Handler)
+
 ----------------------------------------------------------------------
 SECTION 10 — COMPLETE RUST IMPLEMENTATION REQUIREMENTS
 ----------------------------------------------------------------------
@@ -684,6 +690,7 @@ If ANY of the following are present in generated output, STOP and do NOT generat
 9. Any `Mutex`, `RwLock`, `Condvar`, or synchronization primitives
 10. Any tokio task spawning, background timers, or async runtime construction
 11. Any non-provider I/O (std::fs, std::net, std::process, direct HTTP calls)
+12. Any use of anyhow::{Result, Error, Context}
 
 ----------------------------------------------------------------------
 SECTION 13 — ACCESSING QWASR CONTEXT VIA GITHUB MCP
