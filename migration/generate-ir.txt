@@ -80,10 +80,51 @@ Business Logic Blocks (repeat per function/method):
 - Errors:
 - Unknowns:
 
+External API Surfaces (repeat per external call):
+- Endpoint URL pattern:
+- HTTP Method:
+- Request Headers (list each):
+- Request Body Shape (exact JSON/XML structure if present):
+- Response Body Shape (exact JSON/XML structure - CRITICAL: capture full nesting):
+  Example: `[ "string1", "string2" ]` NOT `{ "items": [{ "label": "..." }] }`
+- Authentication Method (e.g., Bearer token, API key, none):
+- Error Responses (status codes and body shapes):
+
+Publication & Timing Patterns (CRITICAL - capture exactly):
+- Publication count: How many times is each message published? (e.g., "twice with 5s delay")
+- Timing/delay operations: Any sleep(), setTimeout(), or delay patterns with exact durations
+- Retry patterns: Any retry loops with counts and backoff
+- Batch vs individual: Are items published individually or batched?
+
+Output Event Structures (preserve exact nesting):
+- For each output type, document the FULL nested structure:
+  Example:
+  ```
+  SmarTrakEvent {
+    receivedAt: DateTime,
+    eventType: enum,
+    messageData: {
+      timestamp: DateTime,
+      // ... nested fields
+    },
+    remoteData: {
+      externalId: string,
+      // ... nested fields  
+    }
+  }
+  ```
+- Never flatten nested objects in IR - preserve hierarchy exactly as in source
+
 Dependencies:
 - <dependency> — <semantics | unknown>
 
 Notes:
 - <free-form observations, comment-claimed gaps, TODO markers>
+
+API Response Verification Checklist:
+- [ ] Every HTTP call has its response shape documented with example
+- [ ] Every external service call has authentication method noted
+- [ ] Publication counts and timing delays are explicitly captured
+- [ ] Output event nesting is preserved (not flattened)
 
 END OF TEXT IR (Do not append extra commentary)
