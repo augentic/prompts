@@ -115,36 +115,6 @@ All business/domain logic must be implemented in pure Rust, and all I/O must be 
 This requirement overrides all other sections.
 
 ----------------------------------------------------------------------
-SECTION 2 — WORKSPACE STRUCTURE
-----------------------------------------------------------------------
-
-2.1 Common Crate (Shared Logic)
-For logic shared across multiple adapters, use the `common` workspace crate:
-
-**Shared APIs:**
-- Block management: `common::block_mgt::allocation()`, `common::block_mgt::allocations()`
-- Fleet operations: `common::fleet::vehicle()`
-- Shared types and utilities
-
-**Usage pattern:**
-```rust
-use common::{block_mgt, fleet};
-
-// Functions accept generic provider parameters
-pub async fn fetch_vehicle<P>(provider: &P, id: &VehicleId) -> Result<Vehicle>
-where
-    P: Config + HttpRequest + Identity
-{
-    fleet::vehicle(provider, id).await
-}
-```
-
-Rules:
-- Never duplicate block management or fleet API logic across domain crates
-- All common functions accept generic provider bounds
-- Import from common workspace crate, never copy/paste logic
-
-----------------------------------------------------------------------
 SECTION 3 — WASI PROVIDER TRAITS
 ----------------------------------------------------------------------
 
@@ -194,7 +164,7 @@ Before generating code, determine if it's domain logic (GENERATED) or boundary i
 SECTION 5 — WASM COMPONENT MODEL REQUIREMENTS
 ----------------------------------------------------------------------
 
-The Rust crate generated must compile to cdylib and be structured for consumption under the WASM Component Model.
+The Rust crate generated must compile to lib and be structured for consumption under the WASM Component Model.
 
 5.1 Handler Interface Patterns
 
