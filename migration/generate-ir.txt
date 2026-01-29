@@ -5,7 +5,7 @@ domain-level business logic for one or more TypeScript/JavaScript source files.
 The IR must be highly descriptive but never infer or guess semantics not explicitly present in the inspected source or explicit source comments.
 
 LEGACY SOURCE CODE TO ANALYZE (full component - injected):
-{LEGACY_SOURCE}
+{{LEGACY_CODE}}
 
 ---
 
@@ -46,7 +46,7 @@ outside repo unknown — ambiguous control flow unknown — semantics not
 documented in source comments or code
 
 OUTPUT LOCATION
-- Write final IR text to #file:output/ir.json (stringified plain text payload).
+- Write final IR text to #file:{{IR_PATH}} (stringified plain text payload).
 - This text IR replaces the JSON schema but must stay deterministic for tooling.
 
 OUTPUT FORMAT (Plain Text ONLY, EXACT ORDER)
