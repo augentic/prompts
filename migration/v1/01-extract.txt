@@ -26,69 +26,67 @@ Rules:
 - Output as strict valid json
 
 Return ONLY the IR schema.
-Output to {IR_PATH}
+Output to {{IR_PATH}}
 
-LEGACY SOURCE CODE (injected):
-{LEGACY_SOURCE}
+LEGACY SOURCE CODE (injected): {{LEGACY_CODE}}
 
-IR Schema:
-{
-  "component_name": "",
-  "source_paths": [],
-  "step": "extract_all",
-  "context": "Full source code of the component",
-  "analysis": "Explain findings across all extraction layers",
-  "ir_output": {
-    "structures": {
-      "imports": [],
-      "exports": [],
-      "types": [],
-      "classes": [],
-      "functions": [],
-      "external_dependencies": []
-    },
-    "http_endpoints": [
-      {
-        "method": "",
-        "path": "",
-        "description": ""   // brief, 1-line summary of purpose
-      }
-    ],
-    "sql_operations": {
-      "inferred_ddl": {
-        "tables": [
-          {
-            "table_name": "",
-            "inferred_columns": [
-              {
-                "column_name": "",
-                "inferred_type": "",
-                "nullable": null,
-                "evidence": ""
-              }
-            ],
-            "inferred_constraints": [],
-            "evidence_source": ""
-          }
-        ]
-      }
-    },
-    "business_logic": {
-      "flows": [],
-      "rules": [],
-      "state_transitions": [],
-      "external_dependency_usage": []
-    },
-    "context": {
-      "purpose": "",
-      "data_flow": [],
-      "domain_rules": [],
-      "interactions": [],
-      "io_operations": [],
-      "async_patterns": [],
-      "error_flow": [],
-      "performance_sensitive_areas": []
-    },
-    "notes": ""
-  }
+IR Schema: {
+    "component_name": "",
+    "source_paths": [],
+    "step": "extract_all",
+    "context": "Full source code of the component",
+    "analysis": "Explain findings across all extraction layers",
+    "ir_output": {
+        "structures": {
+            "imports": [],
+            "exports": [],
+            "types": [],
+            "classes": [],
+            "functions": [],
+            "external_dependencies": []
+        },
+        "http_endpoints": [
+            {
+                "method": "",
+                "path": "",
+                "description": "" // brief, 1-line summary of purpose
+            }
+        ],
+        "sql_operations": {
+            "inferred_ddl": {
+                "tables": [
+                    {
+                        "table_name": "",
+                        "inferred_columns": [
+                            {
+                                "column_name": "",
+                                "inferred_type": "",
+                                "nullable": null,
+                                "evidence": ""
+                            }
+                        ],
+                        "inferred_constraints": [],
+                        "evidence_source": ""
+                    }
+                ]
+            }
+        },
+        "business_logic": {
+            "flows": [],
+            "rules": [],
+            "state_transitions": [],
+            "external_dependency_usage": []
+        },
+        "context": {
+            "purpose": "",
+            "data_flow": [],
+            "domain_rules": [],
+            "interactions": [],
+            "io_operations": [],
+            "async_patterns": [],
+            "error_flow": [],
+            "performance_sensitive_areas": []
+        },
+        "notes": ""
+    }
 }

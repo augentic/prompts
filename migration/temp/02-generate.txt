@@ -752,7 +752,7 @@ This prohibition supersedes IR specifications, OUTPUT_EXAMPLE patterns, and any 
 SECTION 13 — ACCESSING QWASR CONTEXT VIA GITHUB MCP
 ----------------------------------------------------------------------
 
-MCP access is strictly for pattern discovery and must not produce code, commentary, or output artifacts.
+MCP access is strictly for pattern discovery.
 Before generating any Rust code, follow this workflow:
 
 Step 1: Access Base Documentation
