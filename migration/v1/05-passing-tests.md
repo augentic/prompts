@@ -1,4 +1,5 @@
-You are an expert Rust developer. Your task is to fix the generated Rust code to ensure all tests pass.
+You are an expert Rust developer. Your task is to fix the generated Rust code to ensure all tests
+pass.
 
 **GENERATED RUST CODE (from stage 2, may have test failures):**
 {OUTPUT_DIR} {OUTPUT_NAME}
@@ -16,7 +17,8 @@ You are an expert Rust developer. Your task is to fix the generated Rust code to
 1. **Analyze all test failures** in the generated code
 2. **Fix the implementation code** to make all tests pass
 3. **Do NOT modify test harness or test intent** - only fix the implementation
-4. **If a test is wrong or wrongly written**, you are allowed to modify it without changing its intent
+4. **If a test is wrong or wrongly written**, you are allowed to modify it without changing its
+intent
 5. **Preserve all business logic** - do not remove or alter functionality
 6. **Output the corrected code** with all tests passing
 

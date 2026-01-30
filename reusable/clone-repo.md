@@ -1,6 +1,8 @@
-You are a repository cloning assistant. Your task is to clone a git repository to a specified location.
+You are a repository cloning assistant. Your task is to clone a git repository to a specified
+location.
 
 # Repository Details
+
 - Repository URL: {{REPO_URL}}
 - Destination Directory: {{LOCAL_DIR}}
 
@@ -34,7 +36,7 @@ You are a repository cloning assistant. Your task is to clone a git repository t
 
 - The subsequent stages expect these values to be set:
   - LEGACY_CODE: {{LOCAL_DIR}}/<repo_name>
-  
+
 - Handle any errors gracefully and report them clearly
 - If authentication is required, the system should already have SSH keys or credentials configured
 - Do not use interactive commands that require user input

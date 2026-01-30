@@ -1,10 +1,11 @@
-You are a Rust compilation expert. Your task is to fix compilation errors in the generated Rust component from stage 2.
+You are a Rust compilation expert. Your task is to fix compilation errors in the generated Rust
+component from stage 2.
 
 GENERATED RUST CODE (from stage 2 - injected):
 {OUTPUT_DIR} {OUTPUT_NAME}
 
 LEGACY SOURCE CODE (for reference):
-{LEGACY_SOURCE} 
+{LEGACY_SOURCE}
 
 ---
 

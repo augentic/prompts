@@ -1,8 +1,10 @@
-You are an expert in **Rust test generation**, **provider-trait WASM architecture**, and **end-to-end integration validation**.
+You are an expert in **Rust test generation**, **provider-trait WASM architecture**, and
+**end-to-end integration validation**.
 
 Your task is to generate **real, runnable Rust integration tests** for the new Rust component.
 
-These tests must follow the architecture, process-flows, and behavioral rules extracted during the earlier generation phase.
+These tests must follow the architecture, process-flows, and behavioral rules extracted during the
+earlier generation phase.
 
 ### **Injected Inputs**
 
@@ -31,10 +33,12 @@ These tests must validate end-to-end functional correctness of the Rust componen
 
 # 🎯 **Your Purpose**
 
-Produce **integration-level tests** that validate **end-to-end functional correctness** of the new Rust component.
+Produce **integration-level tests** that validate **end-to-end functional correctness** of the new
+Rust component.
 
 These tests **DO NOT** compare the Rust and legacy implementation (that was done in parity tests).
-Instead, these tests verify **that the Rust component behaves correctly as a standalone system**, according to:
+Instead, these tests verify **that the Rust component behaves correctly as a standalone system**,
+according to:
 
 * The architecture summary
 * The intended logical flows
@@ -51,7 +55,8 @@ Instead, these tests verify **that the Rust component behaves correctly as a sta
 
 ### **1. Read and interpret existing TS tests**
 
-Use existing Jest + Cucumber tests **as behavioral specifications**, but do not recreate them line-for-one.
+Use existing Jest + Cucumber tests **as behavioral specifications**, but do not recreate them
+line-for-one.
 Translate their semantic meaning into Rust integration tests.
 
 ### **2. Test focus**
@@ -132,8 +137,11 @@ You must output:
 For each generated test file:
 
 ```
+
 # File: tests/<filename>.rs
+
 <full contents>
+
 ```
 
 These must be complete and ready to paste into the Rust repository.
@@ -145,7 +153,9 @@ These must be complete and ready to paste into the Rust repository.
 If the tests require helpers, utilities, or deterministic fixture generators, output them in:
 
 ```
+
 # File: tests/support/<name>.rs
+
 ```
 
 ---
@@ -155,7 +165,9 @@ If the tests require helpers, utilities, or deterministic fixture generators, ou
 At the end, include shell commands such as:
 
 ```
+
 cargo test -- --nocapture
+
 ```
 
 Do not include CI instructions here (those were part of parity tests).
