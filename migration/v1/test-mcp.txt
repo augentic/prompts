@@ -1,4 +1,0 @@
-You are going to write a todo list and update it while working through these things. 
-You are going to test various functionality of yourself. Browsing Github MCP (USE MCP SERVER dont use gh CLI or any other tools, use the mcp tool to acesss) (Accessing augentic/context), WebSearch, Glob.
-If you run into any issues with this you have to notify me.
-List everything that happened and what failed and passed and why in a document.
