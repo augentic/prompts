@@ -544,7 +544,7 @@ Ensure all imports are resolved and the code compiles with `augentic-test`, `qwa
 ALSO OUTPUT A TEST CONSTRUCTION REPORT DOC ON WHAT ACTIONS WHERE TAKEN AND THE STATE OF THE TEST AND
 REPLAYER
 
-## POST-GENERATION VERIFICATION CHECKLIST (MANDATORY)
+## Post-generation verification checklist (MANDATORY)
 
 Before submitting, verify ALL of the following:
 
