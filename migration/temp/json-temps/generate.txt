@@ -57,8 +57,15 @@ Defines constraints for generated Rust code:
 1.3 CONTEXT TO GATHER (GitHub MCP Required)
 Before generating code, access these resources via GitHub MCP:
 
-A. QWASR RUNTIME CONTEXT
-Repository: augentic/context 
+A. OUTPUT_EXAMPLE (Canonical Pattern)
+Location: [Specify repository/path]
+Provides definitive patterns for:
+- Module organization and code formatting
+- Naming styles and error type organization
+- Provider trait integration and documentation style
+
+B. QWASR RUNTIME CONTEXT
+Repository: augentic/context
 Required reading (follow workflow in Section 12):
 - supportingDocs/INDEX.md, overview.md, code-patterns.md
 - supportingDocs/handler-trait-patterns.md (5 examples)
@@ -137,7 +144,7 @@ Time and Configuration Rules:
 SECTION 4 — DOMAIN VS BOUNDARY DECISION TREE
 ----------------------------------------------------------------------
 
-Generate Domain Layer code only.
+Before generating code, determine if it's domain logic (GENERATED) or boundary infrastructure (NOT GENERATED):
 
 **Boundary Layer (DO NOT GENERATE - host application responsibility):**
 - Uses WASI modules directly (qwasr_wasi_*)
@@ -752,7 +759,6 @@ This prohibition supersedes IR specifications, OUTPUT_EXAMPLE patterns, and any 
 SECTION 13 — ACCESSING QWASR CONTEXT VIA GITHUB MCP
 ----------------------------------------------------------------------
 
-MCP access is strictly for pattern discovery.
 Before generating any Rust code, follow this workflow:
 
 Step 1: Access Base Documentation

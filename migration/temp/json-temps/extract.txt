@@ -26,9 +26,15 @@ Rules:
 - Output as strict valid json
 
 Return ONLY the IR schema.
-Output to {{IR_PATH}}
+Output to {
+    {IR_PATH
+    }
+}
 
-LEGACY SOURCE CODE (injected): {{LEGACY_CODE}}
+LEGACY SOURCE CODE (injected): {
+    {LEGACY_CODE
+    }
+}
 
 IR Schema: {
     "component_name": "",
