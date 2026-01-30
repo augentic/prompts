@@ -41,7 +41,7 @@ dependencies must be rewritten into provider trait calls. All module layouts, fo
 conventions, dependency injection patterns, and structural organization must follow the canonical
 OUTPUT_EXAMPLE exactly.
 
-## SECTION 1 — REQUIRED INPUTS
+## Section 1 — Required inputs
 
 Output to directory {{GENERATED_CRATE}}
 
@@ -100,7 +100,7 @@ This is the definitive pattern for:
 Follow the reference example's structure, naming, and provider flow precisely.
 The output must match the example exactly in structure and formatting.
 
-### QWASR RUNTIME CONTEXT (Required - Access via GitHub MCP)
+### QWASR Runtime Context (Required - Access via GitHub MCP)
 
  CRITICAL: You MUST use the GitHub MCP server to access comprehensive QWASR runtime documentation,
  templates, and working examples from the augentic/context repository before generating any code.
@@ -138,7 +138,7 @@ The output must match the example exactly in structure and formatting.
 - examples/cache/ — End-to-end caching example wiring (reference only)
 - examples/messaging/ — End-to-end messaging example wiring (reference only)
 
-### MANDATORY WORKFLOW
+### Mandatory workflow
 
  1. Before generating any code, use the GitHub MCP server to read the INDEX.md file to understand
  the documentation structure
@@ -162,12 +162,12 @@ All business/domain logic must be implemented in pure Rust, and all I/O must be 
 provider traits, with no leakage of I/O logic into domain modules.
 This requirement overrides all other sections.
 
-## SECTION 2 — WASI PROVIDER TRAITS (MANDATORY)
+## Section 2 — WASI Provider traits (Mandatory)
 
 Direct dependencies on host libraries, frameworks, or external services must never be used directly.
 All external I/O in the TypeScript source must be rewritten into calls to the external provider
 traits from the `qwasr-sdk` crate.
-For detailed 1-to-1 mapping rules, see SECTION 4.
+For detailed 1-to-1 mapping rules, see Section 4.
 
 IMPORTANT: Use the GitHub MCP server to access the augentic/context repository
 (supportingDocs/provider-composition.md and supportingDocs/handler-trait-patterns.md) to understand
@@ -186,7 +186,7 @@ Requirements:
 - All durations and deadlines must be generated using `wasi-clocks` time types if required by the SDK,
 or standard chrono types if strictly internal.
 
-## SECTION 3 — DOMAIN CRATE SCOPE (BUSINESS LOGIC ONLY)
+## Section 3 — Domain crate scope (Business logic only)
 
 This prompt generates business logic crates (domain) only.
 
@@ -226,7 +226,7 @@ WASM Component Model's single-threaded, sandboxed execution model.
 - **All concurrency must be async-only**, using Rust async/await.
 - **All allocations must be minimal** and WASM-memory-safe.
 
-### QWASR-SDK HANDLER INTEGRATION (MANDATORY)
+### qwasr-sdk Handler integration (Mandatory)
 
 IMPORTANT: Use the GitHub MCP server to access the augentic/context repository. Read
 supportingDocs/handler-trait-patterns.md for comprehensive examples demonstrating Handler trait
@@ -257,7 +257,7 @@ All generated Rust handlers MUST integrate with qwasr-sdk using:
 
 These rules override conflicting requirements elsewhere in this prompt.
 
-## SECTION 3A — QWASR SDK API SURFACE CHEAT-SHEET (AUTHORITATIVE)
+## Section 3A — QWASR SDK API Surface cheat-sheet (Authoritative)
 
 Use these exact identifiers and method names. Do not hallucinate other methods.
 
@@ -290,7 +290,7 @@ Use these exact identifiers and method names. Do not hallucinate other methods.
 - Do NOT implement `IntoBody` for `Vec<u8>` or other foreign types (orphan rule violation).
 - Do NOT implement `into_body` on the `Body` trait itself.
 
-## SECTION 4 — 1-TO-1 EXTERNAL I/O MAPPING RULES
+## Section 4 — 1-to-1 External I/O mapping rules
 
 All external I/O must map 1:1 to the appropriate qwasr-sdk provider trait method. No batching,
 retries, or additional calls may be added.
@@ -428,7 +428,7 @@ If the IR does not document the API response shape, you MUST:
 2. Use the most conservative assumption (flat array over nested objects)
 3. Log a warning about the assumption
 
-## SECTION 5 — DEPENDENCY INJECTION REQUIREMENTS
+## Section 5 — Dependency injection requirements
 
 All external I/O must flow through a generic provider parameter that implements the required
 qwasr-sdk traits.
@@ -518,7 +518,7 @@ qwasr-sdk Compatibility Note: The host application (not generated code) will def
 Provider struct that implements all required traits. The generated domain code must only use generic
 trait bounds and never reference or define the Provider type itself.
 
-## SECTION 6 — STRICT NO-HOST-DEPENDENCY REQUIREMENTS
+## Section 6 — Strict no-host-dependency requirements
 
 The generated Rust code must not use or import:
 
@@ -536,7 +536,7 @@ or config client libraries.
 The qwasr-sdk provider traits are external, authoritative interfaces. They must only be imported and
 used. They may never be redefined, wrapped, implemented, or shadowed in any way.
 
-## SECTION 7 — COMPLETE RUST IMPLEMENTATION REQUIREMENTS
+## Section 7 — Complete Rust implementation requirements
 
 Your generated code must include:
 
@@ -728,7 +728,7 @@ All generated code must comply with:
 - Microsoft's official Rust coding guidelines.
 - internal consistency rules from the canonical OUTPUT_EXAMPLE
 
-## SECTION 8 — HARD RULES
+## Section 8 — Hard rules
 
 IMPORTANT: Use the GitHub MCP server to access the augentic/context repository. Read
 supportingDocs/guardrails.md for complete enforcement rules, validation patterns, and hard
@@ -754,7 +754,7 @@ execution. Any use of threads, global mutable state, or host syscalls is strictl
 requires it. Any tracing or logging introduced by the AI must default to tracing::debug! only. No
 business data may be logged at info or above.
 
-## SECTION 9 — OUTPUT HYGIENE (STRICT)
+## Section 9 — Output hygiene (Strict)
 
 - Do not emit build artifacts or caches.
 - Do not create or include:
@@ -766,7 +766,7 @@ business data may be logged at info or above.
   - any compiled wasm, component, or binary output
 - Only emit source files (.rs), Cargo.toml, and the 3 required docs.
 
-## SECTION 10 — POST-CODE-GENERATION DOCUMENTS (MANDATORY AND EXHAUSTIVE)
+## Section 10 — Post-code-generation documents (Mandatory and exhaustive)
 
 After all Rust code has been fully generated and written to the output
 directory, you must additionally generate EXACTLY the following documents
@@ -815,7 +815,7 @@ Document Generation Rules (STRICT):
 - Do NOT generate any other documentation files
 - Do NOT create new documentation types beyond what is shown in the example
 
-## SECTION 11 — ACCESSING QWASR CONTEXT VIA GITHUB MCP
+## Section 11 — Access QWASR CONTEXT VIA GITHUB MCP
 
 CRITICAL WORKFLOW: Before generating any Rust code, you MUST follow this sequence:
 

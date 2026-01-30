@@ -6,12 +6,12 @@ domain-level business logic for one or more TypeScript/JavaScript source files.
 The IR must be highly descriptive but never infer or guess semantics not explicitly present in the
 inspected source or explicit source comments.
 
-LEGACY SOURCE CODE TO ANALYZE (full component - injected):
+Legacy source code to analyze (full component - injected):
 {{LEGACY_CODE}}
 
 ---
 
-## PRINCIPLES (non-negotiable)
+## Principles (non-negotiable)
 
 1. Focus: extract only domain/business logic and its inputs/outputs.
     Exclude infrastructure and I/O specifics unless they are part of a
@@ -34,25 +34,26 @@ LEGACY SOURCE CODE TO ANALYZE (full component - injected):
 9. Deterministic format: use the exact structure so downstream tooling
     can parse.
 
-## TAGS
+## Tags
 
 [domain] — Business logic semantics explicitly domain-related.
-[infrastructure] — Operational code visible in source. [mechanical] —
-Deterministic computation visible in source. [unknown] — Behavior or
-meaning cannot be deduced.
+[infrastructure] — Operational code visible in source.
+[mechanical] — Deterministic computation visible in source.
+[unknown] — Behavior or meaning cannot be deduced.
 
-## UNKNOWN TOKEN (use exactly these)
+## Unknown token (use exactly these)
 
-unknown — not present in source unknown — referenced symbol defined
-outside repo unknown — ambiguous control flow unknown — semantics not
-documented in source comments or code
+unknown — not present in source
+unknown — referenced symbol defined outside repo
+unknown — ambiguous control flow
+unknown — semantics not documented in source comments or code
 
-## OUTPUT LOCATION
+## Output location
 
 - Write final IR text to #file:{{IR_PATH}} (stringified plain text payload).
 - This text IR replaces the JSON schema but must stay deterministic for tooling.
 
-## OUTPUT FORMAT (Plain Text ONLY, EXACT ORDER)
+## Output format (Plain Text ONLY, EXACT ORDER)
 
 ### Component
 
