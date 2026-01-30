@@ -43,7 +43,7 @@ OUTPUT_EXAMPLE exactly.
 
 ## SECTION 1 — REQUIRED INPUTS
 
-Output to a folder called {{OUTPUT_NAME}} in {{OUTPUT_DIR}}
+Output to directory {{GENERATED_CRATE}}
 
 You will receive the following mandatory inputs (injected). These constitute the complete context
 required for code generation.
@@ -183,7 +183,7 @@ Requirements:
 - SystemTime::now() and host-based clock APIs are forbidden.
 - You MUST use `chrono::Utc::now()` for current time.
 - Timezone conversion must use `chrono-tz`.
-- All durations and deadlines must be generated using wasi-clocks time types if required by the SDK,
+- All durations and deadlines must be generated using `wasi-clocks` time types if required by the SDK,
 or standard chrono types if strictly internal.
 
 ## SECTION 3 — DOMAIN CRATE SCOPE (BUSINESS LOGIC ONLY)
@@ -202,8 +202,7 @@ prompt and must be hand-written or macro-generated.
 
 ### Data Models
 
-TypeScript interfaces must be rewritten as Rust structs using:
-`serde::{{Serialize, Deserialize}}`
+TypeScript interfaces must be rewritten as Rust structs using `serde::{Serialize, Deserialize}`
 
 ### Kafka Consumers
 
@@ -240,8 +239,8 @@ copy the structure from augentic/context examples. Do not invent new handler wir
 All generated Rust handlers MUST integrate with qwasr-sdk using:
 
 ```rust
-    use qwasr_sdk::api::{{Handler, Context, Reply}};
-    use qwasr_sdk::{{Config, HttpRequest, Identity, Publisher, StateStore, Message, Error, Result, IntoBody}};
+    use qwasr_sdk::api::{Handler, Context, Reply};
+    use qwasr_sdk::{Config, HttpRequest, Identity, Publisher, StateStore, Message, Error, Result, IntoBody};
 ```
 
 #### Rules
@@ -272,13 +271,11 @@ Use these exact identifiers and method names. Do not hallucinate other methods.
 
 - `Publisher::send(&self, topic: &str, message: &Message) -> Future<Result<()>>`
      (NEVER use `publish()`)
-- `HttpRequest::fetch(&self, request: http::Request<T>) ->
-   Future<Result<http::Response<bytes::Bytes>>>`
+- `HttpRequest::fetch(&self, request: http::Request<T>) -> Future<Result<http::Response<bytes::Bytes>>>`
 - `Identity::access_token(&self, identity: String) -> Future<Result<String>>`
      (Requires identity string argument)
 - `StateStore::get(&self, key: &str) -> Future<Result<Option<Vec<u8>>>>`
-- `StateStore::set(&self, key: &str, value: &[u8], ttl_secs: Option<u64>) ->
-   Future<Result<Option<Vec<u8>>>>`
+- `StateStore::set(&self, key: &str, value: &[u8], ttl_secs: Option<u64>) -> Future<Result<Option<Vec<u8>>>>`
      (Value is always bytes, not string)
 - `StateStore::delete(&self, key: &str) -> Future<Result<()>>`
 - `Config::get(&self, key: &str) -> Future<Result<String>>`
@@ -301,41 +298,41 @@ retries, or additional calls may be added.
 ### HTTP Mapping
 
 TS → Rust Mappings:
-fetch, axios.get, axios.post, got, node:http.request → HttpRequest::fetch()
+`fetch`, `axios.get`, `axios.post`, `got`, `node:http.request` → `HttpRequest::fetch()`
 
 RULES:
 
-- method maps to Request.method(...)
-- url to Request.uri(...)
-- headers to Request.header(...)
+- method maps to `Request.method(...)`
+- url to `Request.uri(...)`
+- headers to `Request.header(...)`
 - query params must be manually appended to the URL
-- bodies: JSON → serde_json::to_vec, strings → into_bytes(), no body → empty vec
+- bodies: JSON → `serde_json::to_vec`, strings → `into_bytes()`, no body → empty vec
 - responses must be parsed per IR Schema, never extended beyond IR fields
 
 Forbidden:
 
 - retries, backoff, custom timeouts
-- direct usage of reqwest/hyper or any host HTTP client
+- direct usage of `reqwest`/`hyper` or any host HTTP client
 
 ### Kafka Producer Mapping
 
 TS → Rust:
-producer.send, producer.sendBatch → Publisher::send()
+`producer.send`, `producer.sendBatch` → `Publisher::send()`
 
 One call in TS equals exactly one send invocation.
 
 ### Kafka Consumer Mapping
 
 TS consumer behavior maps to domain handlers:
-consumer.run / consumer.on("message") → domain `Handler<P>` implementations invoked by boundary
+`consumer.run` / `consumer.on("message")` → domain `Handler<P>` implementations invoked by boundary
 wiring
 
 ### Redis / StateStore Mapping
 
 TS → Rust:
-redis.get → StateStore::get
-redis.set → StateStore::set
-redis.del → StateStore::delete
+`redis.get` → `StateStore::get`
+`redis.set` → `StateStore::set`
+`redis.del` → `StateStore::delete`
 
 If IR requires redis.expire / redis.incr semantics, stop and verify the capability exists in the
 targeted `qwasr_sdk` API surface (via MCP or local SDK source). Do not invent `set_with_ttl` or
@@ -343,14 +340,14 @@ targeted `qwasr_sdk` API surface (via MCP or local SDK source). Do not invent `s
 
 Rules:
 
-- All values must be serialized via serde_json.
+- All values must be serialized via `serde_json`.
 - Deserialization rules strictly follow IR.
-- Missing keys become Ok(None).
+- Missing keys become `Ok(None)`.
 
 ### Identity / Authentication Mapping
 
 TS Azure AD token acquisition maps to:
-Identity::access_token(identity_string)
+`Identity::access_token(identity_string)`
 
 Rules:
 
@@ -380,8 +377,9 @@ let request = http::Request::builder()
     .body(Empty::<Bytes>::new())?;
 ```
 
-4.6 XML Parsing (MANDATORY for XML inputs)
-TS xml2js, x2js → quick_xml::de::from_reader() with serde derives
+### XML Parsing (MANDATORY for XML inputs)
+
+TS `xml2js`, `x2js` → `quick_xml::de::from_reader()` with serde derives
 
 Rules:
 
@@ -406,7 +404,8 @@ pub struct MessagePayload {
 }
 ```
 
-4.7 API Response Handling (CRITICAL)
+### API Response Handling (CRITICAL)
+
 When calling external APIs, you MUST:
 
 1. Check the IR for the EXACT response shape (not invent one)
@@ -438,7 +437,9 @@ one).
 The generated code must NOT define or implement any `Provider` trait.
 The generated code must only import and use the qwasr-sdk traits:
 
-use qwasr_sdk::{{Config, HttpRequest, Identity, Publisher, StateStore, Message, Error, Result}};
+```rust
+use qwasr_sdk::{Config, HttpRequest, Identity, Publisher, StateStore, Message, Error, Result};
+```
 
 IMPORTANT: Use the GitHub MCP server to access the augentic/context repository. Read
 supportingDocs/provider-composition.md for comprehensive provider pattern documentation and
@@ -461,7 +462,12 @@ used).
 
 Every function that performs I/O must accept a generic parameter implementing the required
 subtraits, e.g.:
-`pub async fn run<P>(provider: &P, ...) where P: HttpRequest + StateStore + Publisher + Identity + Config {{ ... }}`
+
+```rust
+pub async fn run<P>(provider: &P, ...) where P: HttpRequest + StateStore + Publisher + Identity + Conf{ 
+    ... 
+}
+```
 
 ### WASI Handler Integration
 
@@ -479,7 +485,11 @@ ctx.provider.
 All qwasr-sdk provider traits (`HttpRequest`, `StateStore`, `Publisher`, `Identity`, `Config`) are
 externally defined.
 The generated component must depend on them via imports only:
-    use qwasr_sdk::{{Config, HttpRequest, Identity, Publisher, StateStore, Message, Error, Result}};
+
+```rust
+    use qwasr_sdk::{Config, HttpRequest, Identity, Publisher, StateStore, Message, Error, Result};
+```
+
 You must enforce strict adherence to provider traits:
 
 - No construction of host-side types such as Client, Config, Producer, Consumer, Redis, etc.
