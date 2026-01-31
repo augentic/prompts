@@ -2,7 +2,7 @@
 
 ## Objective
 
-Analyze the legacy codebase at `{{LEGACY_CODE}}` to understand its structure, dependencies,
+Analyze the legacy codebase at `{{TYPESCRIPT}}` to understand its structure, dependencies,
 patterns, and identify areas that will need special attention during migration.
 
 ## Deep Business-Logic Text IR (Highly Descriptive, Strict, Unambiguous)
@@ -13,8 +13,7 @@ domain-level business logic for one or more TypeScript/JavaScript source files.
 The IR must be highly descriptive but never infer or guess semantics not explicitly present in the
 inspected source or explicit source comments.
 
-Legacy source code to analyze (full component - injected):
-{{LEGACY_CODE}}
+Legacy source code to analyze (full component - injected): `{{TYPESCRIPT}}`
 
 ---
 
