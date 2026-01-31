@@ -1,0 +1,12 @@
+{
+    "name": "rust-migration",
+    "description": "A comprehensive plugin for migrating TypeScript projects to Rust WASM crates targeting the QWASR SDK and wasmtime runtime. Includes skills for codebase analysis, code generation, test harness creation, and full pipeline orchestration.",
+    "version": "2.0.0",
+    "author": {
+        "name": "Augentic"
+    },
+    "required_permissions": {
+        "network": "Required for cloning repositories from remote Git services (GitHub, Bitbucket, GitLab)",
+        "all": "Required for full pipeline execution including git operations and cargo builds"
+    }
+}
