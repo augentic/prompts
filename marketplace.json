@@ -1,0 +1,19 @@
+{
+    "name": "augentic-plugins",
+    "owner": {
+        "name": "Augentic"
+    },
+    "plugins": [
+        {
+            "name": "rust-migration",
+            "source": "./plugins/rust-migration",
+            "description": "A plugin for migrating TypeScript projects to Rust WASM crates.",
+            "version": "1.0.0",
+            "author": {
+                "name": "Augentic"
+            },
+            "repository": "https://github.com/augentic/plugins",
+            "homepage": "https://github.com/augentic/plugins"
+        }
+    ]
+}
