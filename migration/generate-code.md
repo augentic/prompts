@@ -3,12 +3,12 @@
 ## Objective
 
 Generate Rust code from the Intermediate Representation (IR) at `{{IR_PATH}}` and the legacy source
-code at `{{LEGACY_CODE}}`.
+code at `{{TYPESCRIPT}}`.
 
 ## Inputs
 
 - IR: `{{IR_PATH}}`
-- Legacy source code: `{{LEGACY_CODE}}`
+- Legacy source code: `{{TYPESCRIPT}}`
 
 ## Section 0 — Mandatory TODO markers (Critical)
 
@@ -53,7 +53,7 @@ OUTPUT_EXAMPLE exactly.
 
 ## Section 1 — Required inputs
 
-Output to directory {{GENERATED_CRATE}}
+Output to directory {{RUST_CRATE}}
 
 You will receive the following mandatory inputs (injected). These constitute the complete context
 required for code generation.
@@ -72,7 +72,7 @@ This contains:
 This IR is authoritative: if any conflict arises between IR and TypeScript source, the IR prevails.
 Use this IR as the single source of truth for all logic.
 
-### TS_SOURCE (Original TypeScript Code) {{LEGACY_CODE}}
+### TS_SOURCE (Original TypeScript Code) {{TYPESCRIPT}}
 
 The TypeScript source is used only for:
 

@@ -2,9 +2,9 @@
 
 ## Objective
 
-Generate a comprehensive "Replayer" test harness for a specific WASM component. This harness allows
-running the component against recorded production data (snapshots) to verify behavior correctness,
-specifically handling time-dependent logic and external I/O mocking.
+Generate a comprehensive "Replayer" test harness for the Rust crate `{{RUST_CRATE}}`. This harness
+allows running the component against recorded production data (snapshots) to verify behavior
+correctness, specifically handling time-dependent logic and external I/O mocking.
 
 ## About the task
 
@@ -15,8 +15,7 @@ correctness, specifically handling time-dependent logic and external I/O mocking
 
 ## Inputs
 
-<!-- - IR: `{{IR_PATH}}` -->
-- Generated code: `{{CRATE}}`
+- Generated code: `{{RUST_CRATE}}`
 
 ## Goal
 
@@ -43,15 +42,15 @@ and unusable.**
 To generate accurate test harnesses, **MANDATORILY** gather comprehensive context from the target
 component's repository using GitHub MCP access (or approved fallback if MCP is unavailable):
 
-1. **Component Source Code**: Read the main library file (e.g., `{{CRATE}}/src/lib.rs`) and key handler
+1. **Component Source Code**: Read the main library file (e.g., `src/lib.rs`) and key handler
 functions to identify input/output types and external dependencies.
-2. **Test Data Structure**: Examine existing test JSON files in `{{CRATE}}/data/` or `{{CRATE}}/tests/data/` to
+1. **Test Data Structure**: Examine existing test JSON files in `data/` or `tests/data/` to
 understand the schema for inputs, params, http_requests, and outputs.
-3. **Provider Traits**: Identify which `qwasr_sdk` traits the component uses (e.g., `HttpRequest`,
+1. **Provider Traits**: Identify which `qwasr_sdk` traits the component uses (e.g., `HttpRequest`,
 `Publisher`, `Config`, `Identity`).
-4. **Time Logic**: Search for timestamp comparisons or `Utc::now()` usage to determine if
+1. **Time Logic**: Search for timestamp comparisons or `Utc::now()` usage to determine if
 `shift_time` is required.
-5. **Metadata**: Read `Cargo.toml` for dependencies and `README.md` for component description.
+1. **Metadata**: Read `Cargo.toml` for dependencies and `README.md` for component description.
 
 ## Implementation Steps
 
@@ -69,7 +68,7 @@ critical - **Search code with MCP**.
 
 ### Phase 2: Define the Replay Fixture
 
-Create `{{CRATE}}/tests/provider.rs`. Define the `Replay` struct implementing `augentic_test::Fixture`.
+Create `tests/provider.rs`. Define the `Replay` struct implementing `augentic_test::Fixture`.
 
 **CRITICAL**: You MUST implement the `augentic_test::Fixture` trait exactly as shown below. Do NOT
 create your own `TestFixture` struct or custom trait.
