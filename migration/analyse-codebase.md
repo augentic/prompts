@@ -1,4 +1,11 @@
-# Deep Business-Logic Text IR (Highly Descriptive, Strict, Unambiguous)
+# Codebase Analysis Task
+
+## Objective
+
+Analyze the legacy codebase at `{{LEGACY_CODE}}` to understand its structure, dependencies,
+patterns, and identify areas that will need special attention during migration.
+
+## Deep Business-Logic Text IR (Highly Descriptive, Strict, Unambiguous)
 
 You are a Node.js + TypeScript extraction expert. Your mission is to produce a text-based
 Intermediate Representation (IR) that contains reconstruction-grade,

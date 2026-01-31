@@ -1,17 +1,22 @@
-# Augentic WASM Replayer Test Generation Prompt
+# Test Generation Task
 
-You are an expert Rust developer working with the Augentic WASM runtime and testing framework. Your
-task is to generate a comprehensive "Replayer" test harness for a specific WASM component. This
+## Objective
+
+Generate a comprehensive "Replayer" test harness for a specific WASM component. This harness allows
+running the component against recorded production data (snapshots) to verify behavior correctness,
+specifically handling time-dependent logic and external I/O mocking.
+
+## About the task
+
+You are an expert Rust developer working with the Augentic WASM runtime and testing framework. You
+will be generating a comprehensive "Replayer" test harness for a specific WASM component. This
 harness allows running the component against recorded production data (snapshots) to verify behavior
 correctness, specifically handling time-dependent logic and external I/O mocking.
 
-PLACES TO KNOW
+## Inputs
 
-## Injected inputs
-
-- IR: {{IR_PATH}}
-- Legacy source: {{LEGACY_CODE}}
-- Output dir/ location of component: {{OUTPUT_DIR}}
+<!-- - IR: `{{IR_PATH}}` -->
+- Generated code: `{{CRATE}}`
 
 ## Goal
 
@@ -38,9 +43,9 @@ and unusable.**
 To generate accurate test harnesses, **MANDATORILY** gather comprehensive context from the target
 component's repository using GitHub MCP access (or approved fallback if MCP is unavailable):
 
-1. **Component Source Code**: Read the main library file (e.g., `src/lib.rs`) and key handler
+1. **Component Source Code**: Read the main library file (e.g., `{{CRATE}}/src/lib.rs`) and key handler
 functions to identify input/output types and external dependencies.
-2. **Test Data Structure**: Examine existing test JSON files in `data/` or `tests/data/` to
+2. **Test Data Structure**: Examine existing test JSON files in `{{CRATE}}/data/` or `{{CRATE}}/tests/data/` to
 understand the schema for inputs, params, http_requests, and outputs.
 3. **Provider Traits**: Identify which `qwasr_sdk` traits the component uses (e.g., `HttpRequest`,
 `Publisher`, `Config`, `Identity`).
@@ -64,7 +69,7 @@ critical - **Search code with MCP**.
 
 ### Phase 2: Define the Replay Fixture
 
-Create `tests/provider.rs`. Define the `Replay` struct implementing `augentic_test::Fixture`.
+Create `{{CRATE}}/tests/provider.rs`. Define the `Replay` struct implementing `augentic_test::Fixture`.
 
 **CRITICAL**: You MUST implement the `augentic_test::Fixture` trait exactly as shown below. Do NOT
 create your own `TestFixture` struct or custom trait.
@@ -322,7 +327,7 @@ pub fn shift_time(input: &R9kMessage, params: Option<&ReplayTransform>) -> R9kMe
 
 ### Phase 5: Test Runner & Verification
 
-Create `tests/replay.rs`.
+Create `{{CRATE}}/tests/replay.rs`.
 
 **CRITICAL Requirements**:
 
@@ -465,7 +470,7 @@ component inputs/outputs.
 
 ## JSON Data Schema (EXACT FORMAT - DO NOT DEVIATE)
 
-The test files in `data/replay/` follow this EXACT structure. Your deserialization must match.
+The test files in `{{CRATE}}/data/replay/` follow this EXACT structure. Your deserialization must match.
 
 ### Success Case Example
 
@@ -535,14 +540,11 @@ The test files in `data/replay/` follow this EXACT structure. Your deserializati
 
 Generate the full code for:
 
-1. `tests/provider.rs`
-2. `tests/replay.rs`
+1. `{{CRATE}}/tests/provider.rs`
+2. `{{CRATE}}/tests/replay.rs`
 
 Ensure all imports are resolved and the code compiles with `augentic-test`, `qwasr-sdk`, and
 `chrono`.
-
-ALSO OUTPUT A TEST CONSTRUCTION REPORT DOC ON WHAT ACTIONS WHERE TAKEN AND THE STATE OF THE TEST AND
-REPLAYER
 
 ## Post-generation verification checklist (MANDATORY)
 
@@ -574,7 +576,7 @@ Before submitting, verify ALL of the following:
 
 - [ ] Uses `Client::new("owner").provider(...)` abstraction
 - [ ] Does NOT call handlers directly
-- [ ] Data path is `data/replay/` (not `tests/data/replay/`)
+- [ ] Data path is `{{CRATE}}/data/replay/` (not `{{CRATE}}/tests/data/replay/`)
 
 **Error Verification**:
 

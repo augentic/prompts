@@ -1,6 +1,16 @@
-# Generate Code From IR
+# Code Generation Task
 
-## SECTION 0 — MANDATORY TODO MARKERS (CRITICAL)
+## Objective
+
+Generate Rust code from the Intermediate Representation (IR) at `{{IR_PATH}}` and the legacy source
+code at `{{LEGACY_CODE}}`.
+
+## Inputs
+
+- IR: `{{IR_PATH}}`
+- Legacy source code: `{{LEGACY_CODE}}`
+
+## Section 0 — Mandatory TODO markers (Critical)
 
 Any functionality that cannot be fully implemented due to:
 
