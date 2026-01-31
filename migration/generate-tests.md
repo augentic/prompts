@@ -326,7 +326,7 @@ pub fn shift_time(input: &R9kMessage, params: Option<&ReplayTransform>) -> R9kMe
 
 ### Phase 5: Test Runner & Verification
 
-Create `tests/replay.rs`.
+Create `{{CRATE}}/tests/replay.rs`.
 
 **CRITICAL Requirements**:
 
@@ -469,7 +469,7 @@ component inputs/outputs.
 
 ## JSON Data Schema (EXACT FORMAT - DO NOT DEVIATE)
 
-The test files in `data/replay/` follow this EXACT structure. Your deserialization must match.
+The test files in `{{CRATE}}/data/replay/` follow this EXACT structure. Your deserialization must match.
 
 ### Success Case Example
 
@@ -539,8 +539,8 @@ The test files in `data/replay/` follow this EXACT structure. Your deserializati
 
 Generate the full code for:
 
-1. `tests/provider.rs`
-2. `tests/replay.rs`
+1. `{{CRATE}}/tests/provider.rs`
+2. `{{CRATE}}/tests/replay.rs`
 
 Ensure all imports are resolved and the code compiles with `augentic-test`, `qwasr-sdk`, and
 `chrono`.
@@ -575,7 +575,7 @@ Before submitting, verify ALL of the following:
 
 - [ ] Uses `Client::new("owner").provider(...)` abstraction
 - [ ] Does NOT call handlers directly
-- [ ] Data path is `data/replay/` (not `tests/data/replay/`)
+- [ ] Data path is `{{CRATE}}/data/replay/` (not `{{CRATE}}/tests/data/replay/`)
 
 **Error Verification**:
 
